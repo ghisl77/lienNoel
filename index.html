@@ -386,15 +386,11 @@
         }
 
         // ==================== INITIALISATION ==================== 
-        // Mettre à jour le compteur et le compte à rebours au chargement
-        updateCounter();
+        // Mettre à jour le compte à rebours au chargement
         updateCountdown();
 
         // Mettre à jour le compte à rebours chaque seconde (pour effet temps réel)
         setInterval(updateCountdown, 1000);
-
-        // Mettre à jour le compteur toutes les heures
-        setInterval(updateCounter, 3600000); // 3600000 ms = 1 heure
     </script>
 </body>
 </html>

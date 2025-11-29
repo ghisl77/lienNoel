@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre histoire ❤️</title>
+    <style>
+        /* ==================== RÉINITIALISATION ET BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Garamond', serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #6b4c5c;
+        }
+
+        /* ==================== CONTENEUR PRINCIPAL ==================== */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(219, 112, 147, 0.2);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ==================== TITRE PRINCIPAL ==================== */
+        h1 {
+            font-size: 3rem;
+            color: #d85f8f;
+            margin-bottom: 50px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(216, 95, 143, 0.1);
+        }
+
+        /* ==================== SECTION DU COMPTEUR ==================== */
+        .counter-section {
+            margin: 50px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff5f9 0%, #ffe4f0 100%);
+            border-radius: 15px;
+            border: 2px solid #f9a8d4;
+        }
+
+        .counter-label {
+            font-size: 1.1rem;
+            color: #a8648e;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .counter-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d85f8f;
+            margin: 20px 0;
+            font-family: 'Trebuchet MS', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .counter-text {
+            font-size: 1.3rem;
+            color: #b8758f;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        /* ==================== BOUTON STYLÉ ==================== */
+        .button {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 16px 45px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #d85f8f 0%, #c94b7d 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(216, 95, 143, 0.3);
+            font-family: 'Arial', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(216, 95, 143, 0.4);
+            background: linear-gradient(135deg, #c94b7d 0%, #b53a6c 100%);
+        }
+
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(216, 95, 143, 0.3);
+        }
+
+        .button-secondary {
+            background: linear-gradient(135deg, #a8648e 0%, #936577 100%);
+            box-shadow: 0 10px 25px rgba(168, 100, 142, 0.3);
+            margin-left: 10px;
+        }
+
+        .button-secondary:hover {
+            box-shadow: 0 15px 35px rgba(168, 100, 142, 0.4);
+            background: linear-gradient(135deg, #936577 0%, #7d5666 100%);
+        }
+
+        /* ==================== SECTION COMPTE À REBOURS ==================== */
+        .countdown-section {
+            margin: 50px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #f9f0f5 0%, #ffe4f0 100%);
+            border-radius: 15px;
+            border: 2px solid #f9a8d4;
+        }
+
+        .countdown-label {
+            font-size: 1.1rem;
+            color: #a8648e;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .countdown-box {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(216, 95, 143, 0.15);
+            min-width: 70px;
+        }
+
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d85f8f;
+            font-family: 'Trebuchet MS', sans-serif;
+            line-height: 1;
+        }
+
+        .countdown-unit {
+            font-size: 0.85rem;
+            color: #a8648e;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ==================== DÉCORATION (CŒURS) ==================== */
+        .decoration {
+            font-size: 1.5rem;
+            opacity: 0.3;
+            margin: 30px 0 0 0;
+            letter-spacing: 8px;
+        }
+
+        /* ==================== RESPONSIVITÉ ==================== */
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+
+            .counter-section {
+                padding: 20px;
+                margin: 30px 0;
+            }
+
+            .counter-value {
+                font-size: 2rem;
+            }
+
+            .counter-text {
+                font-size: 1.1rem;
+            }
+
+            .button {
+                padding: 14px 35px;
+                font-size: 1rem;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .button-secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .countdown-box {
+                gap: 10px;
+            }
+
+            .countdown-item {
+                padding: 12px 15px;
+                min-width: 60px;
+            }
+
+            .countdown-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 30px;
+            }
+
+            .counter-value {
+                font-size: 1.8rem;
+            }
+
+            .counter-text {
+                font-size: 1rem;
+            }
+
+            .countdown-box {
+                gap: 8px;
+            }
+
+            .countdown-item {
+                padding: 10px 10px;
+                min-width: 55px;
+            }
+
+            .countdown-number {
+                font-size: 1.3rem;
+            }
+
+            .countdown-unit {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Titre principal -->
+        <h1>Notre histoire ❤️</h1>
+
+        <!-- Section du compteur -->
+        <div class="counter-section">
+            <div class="counter-label">Depuis le</div>
+            <div class="counter-value" id="daysCount">---</div>
+            <div class="counter-text" id="counterText">Nous sommes ensemble depuis --- jours ❤️</div>
+        </div>
+
+        <!-- Section du compte à rebours -->
+        <div class="countdown-section">
+            <div class="countdown-label">Depuis le 7 avril 2025</div>
+            <div class="countdown-box">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">0</span>
+                    <span class="countdown-unit">Jours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">0</span>
+                    <span class="countdown-unit">Heures</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">0</span>
+                    <span class="countdown-unit">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">0</span>
+                    <span class="countdown-unit">Secondes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bouton de redirection -->
+        <a href="./mapage.html" class="button">Accéder à notre page</a>
+
+        <!-- Bouton SoundCloud -->
+        <a href="https://soundcloud.com/user-828147496/popiere-6?si=0f20ac20bb1843c6963d0571f98815a9&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" class="button button-secondary" target="_blank">🎵 Écouter notre musique</a>
+
+        <!-- Décoration -->
+        <div class="decoration">❤️ ❤️ ❤️</div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ==================== 
+        // ⚠️ MODIFIEZ CETTE DATE POUR PERSONNALISER VOTRE COMPTEUR
+        // Format: "YYYY-MM-DD" (exemple: "2023-06-15" pour le 15 juin 2023)
+        const startDate = new Date("2024-01-15"); // ← Changez cette date !
+
+        // ==================== FONCTION DE CALCUL ==================== 
+        /**
+         * Calcule le nombre de jours entre la date de début et aujourd'hui
+         * @param {Date} start - La date de début
+         * @returns {number} Le nombre de jours écoulés
+         */
+        function calculateDaysTogether(start) {
+            const today = new Date();
+            
+            // Réinitialiser les heures pour un calcul précis en jours
+            today.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            
+            // Calculer la différence en millisecondes, puis convertir en jours
+            const timeDifference = today - start;
+            const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            
+            return daysDifference;
+        }
+
+        // ==================== MISE À JOUR DU COMPTEUR ==================== 
+        /**
+         * Met à jour le compteur de jours sur la page
+         */
+        function updateCounter() {
+            const days = calculateDaysTogether(startDate);
+            
+            // Mise à jour du nombre de jours
+            document.getElementById("daysCount").textContent = days;
+            
+            // Mise à jour du texte complet
+            const counterTextElement = document.getElementById("counterText");
+            counterTextElement.textContent = `Nous sommes ensemble depuis ${days} jour${days !== 1 ? 's' : ''} ❤️`;
+        }
+
+        // ==================== COMPTE À REBOURS EN TEMPS RÉEL ==================== 
+        /**
+         * Met à jour le temps écoulé depuis le 7 avril 2025
+         */
+        function updateCountdown() {
+            const startCountdown = new Date("2025-04-07");
+            startCountdown.setHours(0, 0, 0, 0);
+            
+            const now = new Date();
+            const nowMidnight = new Date(now);
+            nowMidnight.setHours(0, 0, 0, 0);
+            
+            // Temps écoulé depuis minuit
+            const timeSinceMidnight = now - nowMidnight;
+            
+            // Jours écoulés depuis le 7 avril
+            const daysElapsed = Math.floor((nowMidnight - startCountdown) / (1000 * 60 * 60 * 24));
+
+            if (daysElapsed < 0) {
+                // Si la date n'est pas encore arrivée
+                document.getElementById("days").textContent = "00";
+                document.getElementById("hours").textContent = "00";
+                document.getElementById("minutes").textContent = "00";
+                document.getElementById("seconds").textContent = "00";
+                return;
+            }
+
+            // Calcul des unités de temps (heures, minutes, secondes actuelles)
+            const hours = Math.floor(timeSinceMidnight / (1000 * 60 * 60));
+            const minutes = Math.floor((timeSinceMidnight % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeSinceMidnight % (1000 * 60)) / 1000);
+
+            // Mise à jour du DOM
+            document.getElementById("days").textContent = String(daysElapsed).padStart(2, '0');
+            document.getElementById("hours").textContent = String(hours).padStart(2, '0');
+            document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+        }
+
+        // ==================== INITIALISATION ==================== 
+        // Mettre à jour le compteur et le compte à rebours au chargement
+        updateCounter();
+        updateCountdown();
+
+        // Mettre à jour le compte à rebours chaque seconde (pour effet temps réel)
+        setInterval(updateCountdown, 1000);
+
+        // Mettre à jour le compteur toutes les heures
+        setInterval(updateCounter, 3600000); // 3600000 ms = 1 heure
+    </script>
+</body>
+</html>

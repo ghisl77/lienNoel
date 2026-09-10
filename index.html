@@ -1,31 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Notre histoire ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
-        /* ==================== RÉINITIALISATION ET BASE ==================== */
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Georgia', 'Garamond', serif;
-            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #6b4c5c;
-            position: relative;
-            overflow: hidden;
+        :root {
+            --pink-light: #ffd6e7;
+            --pink-mid: #ff9cc2;
+            --pink-deep: #e8527a;
+            --pink-dark: #c23668;
+            --rose: #ff4d6d;
+            --cream: #fff8f8;
+            --gold: #f9c74f;
+            --purple: #c77dff;
+            --white: #ffffff;
+            --text: #5a2d45;
+            --text-light: #9b6680;
         }
 
-        /* ==================== CANVAS POUR CONFETTIS ==================== */
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #ffe0ec 0%, #ffc2d9 30%, #ffadd4 60%, #ff91c4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            color: var(--text);
+            position: relative;
+        }
+
+        /* ===== CANVAS CONFETTIS ===== */
         #canvas {
             position: fixed;
             top: 0;
@@ -36,366 +61,440 @@
             z-index: 9999;
         }
 
-        /* ==================== CONTENEUR PRINCIPAL ==================== */
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 60px 40px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(219, 112, 147, 0.2);
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        /* ==================== TITRE PRINCIPAL ==================== */
-        h1 {
-            font-size: 3rem;
-            color: #d85f8f;
-            margin-bottom: 50px;
-            font-weight: normal;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(216, 95, 143, 0.1);
-        }
-
-        /* ==================== BOUTON STYLÉ ==================== */
-        .button {
-            display: inline-block;
-            margin-top: 50px;
-            padding: 16px 45px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #d85f8f 0%, #c94b7d 100%);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(216, 95, 143, 0.3);
-            font-family: 'Arial', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(216, 95, 143, 0.4);
-            background: linear-gradient(135deg, #c94b7d 0%, #b53a6c 100%);
-        }
-
-        .button:active {
-            transform: translateY(0);
-            box-shadow: 0 5px 15px rgba(216, 95, 143, 0.3);
-        }
-
-        .button-secondary {
-            background: linear-gradient(135deg, #a8648e 0%, #936577 100%);
-            box-shadow: 0 10px 25px rgba(168, 100, 142, 0.3);
-            margin-left: 10px;
-        }
-
-        .button-secondary:hover {
-            box-shadow: 0 15px 35px rgba(168, 100, 142, 0.4);
-            background: linear-gradient(135deg, #936577 0%, #7d5666 100%);
-        }
-
-        /* ==================== DÉCORATION (CŒURS) ==================== */
-        .decoration {
-            font-size: 1.5rem;
-            opacity: 0.3;
-            margin: 30px 0 0 0;
-            letter-spacing: 8px;
-        }
-
-        /* ==================== SECTION AVEC IMAGES ==================== */
-        .images-wrapper {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
-        }
-
-        .images-wrapper img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(216, 95, 143, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-            opacity: 0;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .images-wrapper img.show {
-            animation: imageDrop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @keyframes imageDrop {
-            0% {
-                opacity: 0;
-                transform: translateY(-300px) rotate(-180deg) scale(0.3);
-            }
-            60% {
-                opacity: 1;
-                transform: translateY(20px) rotate(10deg) scale(1.1);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-        }
-
-        .images-wrapper img:hover {
-            transform: scale(1.08) rotate(2deg);
-            box-shadow: 0 15px 40px rgba(216, 95, 143, 0.4);
-            filter: brightness(1.05);
-        }
-
-        /* ==================== LIGHTBOX ==================== */
-        .lightbox {
-            display: none;
+        /* ===== DÉCOR FOND — BULLES FLOTTANTES ===== */
+        .bg-bubbles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 10001;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        .lightbox.show {
-            display: flex;
-            animation: lightboxFadeIn 0.3s ease forwards;
-        }
-
-        @keyframes lightboxFadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-
-        .lightbox-content {
-            position: relative;
-            max-width: 90vw;
-            max-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .lightbox img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2);
-            animation: imageZoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes imageZoomIn {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .lightbox-close {
+        .bubble {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 3rem;
-            color: white;
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            bottom: -80px;
             border-radius: 50%;
-            background: rgba(216, 95, 143, 0.3);
-            transition: all 0.3s ease;
-            z-index: 1;
+            opacity: 0.25;
+            animation: riseUp linear infinite;
         }
 
-        .lightbox-close:hover {
-            background: rgba(216, 95, 143, 0.6);
-            transform: rotate(90deg);
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 5%;
+            background: #ff9cc2;
+            animation-duration: 9s;
+            animation-delay: 0s;
         }
 
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 3rem;
-            color: white;
-            cursor: pointer;
+        .bubble:nth-child(2) {
+            width: 25px;
+            height: 25px;
+            left: 15%;
+            background: #ffd6e7;
+            animation-duration: 12s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(3) {
             width: 60px;
             height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(216, 95, 143, 0.3);
-            transition: all 0.3s ease;
-            user-select: none;
+            left: 25%;
+            background: #ff91c4;
+            animation-duration: 8s;
+            animation-delay: 4s;
         }
 
-        .lightbox-nav:hover {
-            background: rgba(216, 95, 143, 0.6);
-            transform: translateY(-50%) scale(1.1);
+        .bubble:nth-child(4) {
+            width: 30px;
+            height: 30px;
+            left: 38%;
+            background: #c77dff;
+            animation-duration: 14s;
+            animation-delay: 1s;
         }
 
-        .lightbox-nav.prev {
-            left: 20px;
-        }
-
-        .lightbox-nav.next {
-            right: 20px;
-        }
-
-        .lightbox-counter {
-            position: absolute;
-            bottom: 20px;
+        .bubble:nth-child(5) {
+            width: 50px;
+            height: 50px;
             left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 1.2rem;
-            background: rgba(216, 95, 143, 0.5);
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-family: 'Arial', sans-serif;
+            background: #ff9cc2;
+            animation-duration: 10s;
+            animation-delay: 3s;
         }
 
-        /* ==================== GALERIE D'IMAGES ==================== */
-        .gallery {
-            margin: 40px 0;
-            display: none; /* Caché car maintenant les images sont à côté du countdown */
+        .bubble:nth-child(6) {
+            width: 20px;
+            height: 20px;
+            left: 63%;
+            background: #ffd6e7;
+            animation-duration: 11s;
+            animation-delay: 5s;
         }
 
-        /* ==================== SECTION VALENTINE ==================== */
-        .valentine-section {
-            margin: 50px 0 30px 0;
-            padding: 40px 30px;
-            background: linear-gradient(135deg, #fff5f9 0%, #ffe4f0 100%);
-            border-radius: 15px;
-            border: 2px solid #f9a8d4;
+        .bubble:nth-child(7) {
+            width: 45px;
+            height: 45px;
+            left: 75%;
+            background: #ff91c4;
+            animation-duration: 7s;
+            animation-delay: 1.5s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 35px;
+            height: 35px;
+            left: 87%;
+            background: #f9c74f;
+            animation-duration: 13s;
+            animation-delay: 3.5s;
+        }
+
+        .bubble:nth-child(9) {
+            width: 18px;
+            height: 18px;
+            left: 93%;
+            background: #ff9cc2;
+            animation-duration: 9s;
+            animation-delay: 6s;
+        }
+
+        .bubble:nth-child(10) {
+            width: 55px;
+            height: 55px;
+            left: 8%;
+            background: #c77dff;
+            animation-duration: 16s;
+            animation-delay: 2.5s;
+        }
+
+        @keyframes riseUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.25;
+            }
+
+            50% {
+                transform: translateY(-45vh) scale(1.05);
+                opacity: 0.18;
+            }
+
+            100% {
+                transform: translateY(-100vh) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        /* ===== GUIRLANDE HAUT ===== */
+        .garland {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 55px;
+            z-index: 1;
+            pointer-events: none;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .garland-svg {
+            width: 100%;
+            height: 55px;
+        }
+
+        /* ===== CONTENU PRINCIPAL ===== */
+        .page-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 65px 16px 40px 16px;
+        }
+
+        /* ===== HEADER ===== */
+        .site-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .site-header h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2rem;
+            color: var(--white);
+            text-shadow: 0 3px 12px rgba(200, 50, 100, 0.4), 0 0 30px rgba(255, 150, 200, 0.3);
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .site-header .sparkles {
+            font-size: 1.3rem;
+            display: block;
+            margin-top: 4px;
+            letter-spacing: 6px;
+            animation: sparkleAnim 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkleAnim {
+
+            0%,
+            100% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+
+        /* ===== NOUNOURS SVG ===== */
+        .bear-container {
+            margin: 8px auto 16px auto;
+            width: 180px;
+            height: 180px;
+            position: relative;
+            filter: drop-shadow(0 8px 20px rgba(200, 50, 100, 0.35));
+            animation: bearFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes bearFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-1deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+        }
+
+        /* ===== CARD PRINCIPALE ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 28px;
+            width: 100%;
+            padding: 30px 22px 26px 22px;
+            box-shadow: 0 8px 40px rgba(220, 80, 130, 0.2), 0 2px 0 rgba(255, 255, 255, 0.8) inset;
+            border: 1.5px solid rgba(255, 200, 220, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255, 145, 196, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(199, 125, 255, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ===== SECTION VALENTINE ===== */
+        #valentineSection {
+            text-align: center;
         }
 
         .valentine-question {
-            font-size: 3.5rem;
-            color: #d85f8f;
-            margin-bottom: 50px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            line-height: 1.3;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.6rem;
+            color: var(--pink-dark);
+            line-height: 1.4;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 8px rgba(200, 54, 104, 0.15);
         }
 
         .valentine-buttons {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
         }
 
-        .valentine-button {
-            padding: 16px 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
+        .val-btn {
+            width: 100%;
+            max-width: 260px;
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
             color: white;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Arial', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.25s cubic-bezier(.34, 1.56, .64, 1);
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .valentine-button.yes {
-            background: linear-gradient(135deg, #d85f8f 0%, #c94b7d 100%);
-            box-shadow: 0 10px 25px rgba(216, 95, 143, 0.3);
+        .val-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 50px;
         }
 
-        .valentine-button.yes:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(216, 95, 143, 0.4);
-            background: linear-gradient(135deg, #c94b7d 0%, #b53a6c 100%);
+        .val-btn.yes {
+            background: linear-gradient(135deg, #ff4d6d 0%, #c23668 100%);
+            box-shadow: 0 8px 24px rgba(226, 50, 100, 0.4), 0 2px 0 rgba(255, 100, 130, 0.3) inset;
         }
 
-        .valentine-button.no {
-            background: linear-gradient(135deg, #a8648e 0%, #936577 100%);
-            box-shadow: 0 10px 25px rgba(168, 100, 142, 0.3);
+        .val-btn.yes:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 14px 32px rgba(226, 50, 100, 0.5);
         }
 
-        .valentine-button.no:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(168, 100, 142, 0.4);
-            background: linear-gradient(135deg, #936577 0%, #7d5666 100%);
+        .val-btn.yes:active {
+            transform: scale(0.97);
         }
 
-        /* ==================== MESSAGE DE RÉPONSE ==================== */
-        .response-message {
-            display: none;
-            margin-top: 30px;
-            padding: 30px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(216, 95, 143, 0.2);
+        .val-btn.no {
+            background: linear-gradient(135deg, #b78ec4 0%, #9b59b6 100%);
+            box-shadow: 0 8px 24px rgba(155, 89, 182, 0.35);
         }
 
-        .response-message.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .val-btn.no:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 14px 32px rgba(155, 89, 182, 0.45);
         }
 
-        @keyframes fadeIn {
-            from {
+        .val-btn.no:active {
+            transform: scale(0.97);
+        }
+
+        /* petits emojis décors autour de la question */
+        .deco-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0 18px 0;
+            font-size: 1.3rem;
+        }
+
+        .deco-row span {
+            animation: popBounce 1.8s ease-in-out infinite;
+        }
+
+        .deco-row span:nth-child(2) {
+            animation-delay: .3s;
+        }
+
+        .deco-row span:nth-child(3) {
+            animation-delay: .6s;
+        }
+
+        .deco-row span:nth-child(4) {
+            animation-delay: .9s;
+        }
+
+        .deco-row span:nth-child(5) {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes popBounce {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-6px) scale(1.15);
+            }
+        }
+
+        /* ===== MESSAGE ROMANTIQUE ===== */
+        .romantic-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.97);
+            padding: 40px 28px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(216, 95, 143, 0.45);
+            z-index: 10000;
+            text-align: center;
+            width: 88%;
+            max-width: 360px;
+            opacity: 0;
+        }
+
+        .romantic-message.show {
+            animation: msgPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes msgPop {
+            0% {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translate(-50%, -50%) scale(0);
             }
-            to {
+
+            100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
-        .response-message h2 {
-            font-size: 2rem;
-            color: #d85f8f;
-            margin-bottom: 15px;
+        .romantic-message h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.7rem;
+            color: var(--pink-dark);
+            margin-bottom: 14px;
         }
 
-        .response-message p {
-            font-size: 1.2rem;
-            color: #a8648e;
-            line-height: 1.6;
+        .romantic-message p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
         }
 
-        /* ==================== ANIMATION CONTENU PRINCIPAL ==================== */
+        .msg-bear {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+            animation: bearFloat 2s ease-in-out infinite;
+        }
+
+        /* ===== CONTENU PRINCIPAL (après oui) ===== */
         #mainContent {
             opacity: 0;
             transform: translateY(20px);
         }
 
         #mainContent.show {
-            animation: contentAppear 1s ease forwards;
+            animation: contentAppear 0.8s ease forwards;
         }
 
         @keyframes contentAppear {
@@ -405,550 +504,617 @@
             }
         }
 
-        /* ==================== MESSAGE ROMANTIQUE ==================== */
-        .romantic-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: rgba(255, 255, 255, 0.98);
-            padding: 60px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(216, 95, 143, 0.4);
-            z-index: 10000;
+        .main-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5rem;
+            color: var(--pink-dark);
             text-align: center;
-            max-width: 500px;
-            width: 90%;
-            opacity: 0;
+            margin-bottom: 18px;
+            line-height: 1.4;
         }
 
-        .romantic-message.show {
-            animation: messagePopup 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        @keyframes messagePopup {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        .romantic-message h2 {
-            font-size: 2.5rem;
-            color: #d85f8f;
+        /* ===== GRILLE PHOTOS ===== */
+        .images-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
-        .romantic-message p {
-            font-size: 1.3rem;
-            color: #a8648e;
-            line-height: 1.8;
+        .img-frame {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(220, 80, 130, 0.25);
+            aspect-ratio: 1 / 1;
+            opacity: 0;
         }
 
-        /* ==================== RESPONSIVITÉ ==================== */
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-                border-radius: 15px;
-                max-width: 95%;
+        .img-frame.show {
+            animation: imageDrop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes imageDrop {
+            0% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.7) rotate(-10deg);
             }
 
-            h1 {
-                font-size: 2.5rem;
-                margin-bottom: 30px;
+            60% {
+                opacity: 1;
+                transform: translateY(5px) scale(1.05) rotate(2deg);
             }
 
-            .valentine-question {
-                font-size: 2.2rem;
-                margin-bottom: 35px;
-                line-height: 1.4;
-            }
-
-            .valentine-buttons {
-                gap: 15px;
-            }
-
-            .valentine-button {
-                padding: 18px 40px;
-                font-size: 1.1rem;
-                min-width: 120px;
-            }
-
-            .images-wrapper {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .images-wrapper img {
-                height: 220px;
-            }
-
-            .button {
-                padding: 16px 40px;
-                font-size: 1rem;
-                margin-top: 30px;
-            }
-
-            .button-secondary {
-                margin-left: 0;
-                margin-top: 20px;
-            }
-
-            .romantic-message {
-                padding: 40px 30px;
-                width: 85%;
-            }
-
-            .romantic-message h2 {
-                font-size: 2.2rem;
-            }
-
-            .romantic-message p {
-                font-size: 1.2rem;
-            }
-
-            /* Lightbox responsive */
-            .lightbox-content {
-                max-width: 95vw;
-                max-height: 75vh;
-                padding: 10px;
-            }
-
-            .lightbox-close {
-                top: 10px;
-                right: 10px;
-                font-size: 2.5rem;
-                width: 45px;
-                height: 45px;
-            }
-
-            .lightbox-nav {
-                font-size: 2.5rem;
-                width: 50px;
-                height: 50px;
-            }
-
-            .lightbox-nav.prev {
-                left: 10px;
-            }
-
-            .lightbox-nav.next {
-                right: 10px;
-            }
-
-            .lightbox-counter {
-                bottom: 10px;
-                font-size: 1rem;
-                padding: 8px 20px;
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
             }
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px 15px;
-                border-radius: 12px;
+        .img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            display: block;
+        }
+
+        .img-frame:active img {
+            transform: scale(1.08);
+        }
+
+        .img-frame .frame-heart {
+            position: absolute;
+            bottom: 6px;
+            right: 8px;
+            font-size: 1.1rem;
+            opacity: 0.85;
+        }
+
+        /* ===== BOUTON MUSIQUE ===== */
+        .music-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            color: white;
+            background: linear-gradient(135deg, #9b59b6 0%, #6c3483 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(108, 52, 131, 0.4);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(108, 52, 131, 0.5);
+        }
+
+        .music-btn:active {
+            transform: scale(0.97);
+        }
+
+        .music-note {
+            font-size: 1.4rem;
+            animation: noteJump 1s ease-in-out infinite;
+        }
+
+        @keyframes noteJump {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-5deg);
             }
 
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 25px;
-            }
-
-            .valentine-section {
-                padding: 30px 20px;
-            }
-
-            .valentine-question {
-                font-size: 1.8rem;
-                margin-bottom: 30px;
-            }
-
-            .valentine-buttons {
-                gap: 15px;
-            }
-
-            .valentine-button {
-                padding: 14px 30px;
-                font-size: 1rem;
-            }
-
-            .images-wrapper {
-                gap: 12px;
-            }
-
-            .images-wrapper img {
-                height: 200px;
-                border-radius: 12px;
-            }
-
-            .button {
-                padding: 14px 30px;
-                font-size: 0.95rem;
-                width: 100%;
-            }
-
-            .button-secondary {
-                margin-top: 15px;
-            }
-
-            .romantic-message {
-                padding: 30px 20px;
-                width: 90%;
-            }
-
-            .romantic-message h2 {
-                font-size: 1.8rem;
-            }
-
-            .romantic-message p {
-                font-size: 1rem;
-            }
-
-            .decoration {
-                font-size: 1.2rem;
-                margin-top: 20px;
-            }
-
-            /* Lightbox très petits écrans */
-            .lightbox-content {
-                max-width: 95vw;
-                max-height: 70vh;
-                padding: 5px;
-            }
-
-            .lightbox-close {
-                top: 5px;
-                right: 5px;
-                font-size: 2rem;
-                width: 40px;
-                height: 40px;
-            }
-
-            .lightbox-nav {
-                font-size: 2rem;
-                width: 45px;
-                height: 45px;
-            }
-
-            .lightbox-nav.prev {
-                left: 5px;
-            }
-
-            .lightbox-nav.next {
-                right: 5px;
-            }
-
-            .lightbox-counter {
-                bottom: 5px;
-                font-size: 0.9rem;
-                padding: 6px 15px;
+            50% {
+                transform: translateY(-5px) rotate(5deg);
             }
         }
 
-        @media (max-width: 360px) {
-            .container {
-                padding: 20px 12px;
+        /* ===== PIED DE PAGE DÉCORATIF ===== */
+        .footer-deco {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+            opacity: 0.5;
+            animation: pulseHearts 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseHearts {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
             }
 
-            .valentine-question {
-                font-size: 1.5rem;
+            50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+        }
+
+        /* ===== PETITES ÉTOILES COINS ===== */
+        .star-corner {
+            position: absolute;
+            font-size: 1rem;
+            opacity: 0.45;
+            animation: twinkle 2.5s ease-in-out infinite;
+        }
+
+        .star-corner.tl {
+            top: 10px;
+            left: 12px;
+        }
+
+        .star-corner.tr {
+            top: 10px;
+            right: 12px;
+            animation-delay: .5s;
+        }
+
+        .star-corner.bl {
+            bottom: 10px;
+            left: 12px;
+            animation-delay: 1s;
+        }
+
+        .star-corner.br {
+            bottom: 10px;
+            right: 12px;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1) rotate(0deg);
             }
 
-            .valentine-button {
-                padding: 14px 30px;
-                font-size: 0.95rem;
+            50% {
+                opacity: 0.7;
+                transform: scale(1.3) rotate(20deg);
+            }
+        }
+
+        /* ===== LIGHTBOX ===== */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.show {
+            display: flex;
+            animation: lbFadeIn 0.3s ease forwards;
+        }
+
+        @keyframes lbFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .lightbox {
+            opacity: 0;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 92vw;
+            max-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 78vh;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.15);
+            animation: lbZoom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes lbZoom {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
             }
 
-            h1 {
-                font-size: 1.8rem;
+            100% {
+                transform: scale(1);
+                opacity: 1;
             }
+        }
 
-            .images-wrapper img {
-                height: 180px;
-            }
+        .lb-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            background: rgba(216, 95, 143, 0.55);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
 
-            .romantic-message h2 {
-                font-size: 1.6rem;
-            }
+        .lb-close:hover {
+            background: rgba(216, 95, 143, 0.85);
+            transform: rotate(90deg);
+        }
 
-            .romantic-message p {
-                font-size: 0.95rem;
-            }
+        .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(216, 95, 143, 0.45);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            user-select: none;
+        }
 
-            /* Lightbox écrans très très petits */
-            .lightbox-content {
-                max-width: 95vw;
-                max-height: 65vh;
-                padding: 5px;
-            }
+        .lb-nav:hover {
+            background: rgba(216, 95, 143, 0.75);
+        }
 
-            .lightbox-close {
-                font-size: 1.8rem;
-                width: 35px;
-                height: 35px;
-            }
+        .lb-nav.prev {
+            left: 10px;
+        }
 
-            .lightbox-nav {
-                font-size: 1.8rem;
-                width: 40px;
-                height: 40px;
-            }
+        .lb-nav.next {
+            right: 10px;
+        }
 
-            .lightbox-counter {
-                font-size: 0.85rem;
-                padding: 5px 12px;
-            }
+        .lb-counter {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.95rem;
+            background: rgba(216, 95, 143, 0.55);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
         }
     </style>
 </head>
+
 <body>
-    <!-- Canvas pour les confettis et cœurs -->
+
     <canvas id="canvas"></canvas>
+
+    <!-- Bulles de fond -->
+    <div class="bg-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Guirlande décorative SVG en haut -->
+    <div class="garland">
+        <svg class="garland-svg" viewBox="0 0 430 55" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Fil de guirlande -->
+            <path d="M0,12 Q53,40 107,12 Q160,40 214,12 Q267,40 321,12 Q374,40 430,12" stroke="#e8527a" stroke-width="2"
+                fill="none" opacity="0.7" />
+            <!-- Petites ampoules / pompons -->
+            <circle cx="53" cy="36" r="7" fill="#ff4d6d" opacity="0.85" />
+            <circle cx="107" cy="12" r="5" fill="#f9c74f" opacity="0.9" />
+            <circle cx="160" cy="36" r="7" fill="#c77dff" opacity="0.85" />
+            <circle cx="214" cy="12" r="5" fill="#ff9cc2" opacity="0.9" />
+            <circle cx="267" cy="36" r="7" fill="#ff4d6d" opacity="0.85" />
+            <circle cx="321" cy="12" r="5" fill="#f9c74f" opacity="0.9" />
+            <circle cx="374" cy="36" r="7" fill="#c77dff" opacity="0.85" />
+            <!-- Cœurs sur la guirlande -->
+            <text x="47" y="41" font-size="10" fill="white" text-anchor="middle">♥</text>
+            <text x="155" y="41" font-size="10" fill="white" text-anchor="middle">♥</text>
+            <text x="262" y="41" font-size="10" fill="white" text-anchor="middle">♥</text>
+            <text x="369" y="41" font-size="10" fill="white" text-anchor="middle">♥</text>
+        </svg>
+    </div>
 
     <!-- Message romantique -->
     <div class="romantic-message" id="romanticMessage">
-        <h2>Je savais que tu dirais oui! ❤️</h2>
-        <p>Tu es la plus belle chose qui me soit arrivée. Prépare-toi pour une belle surprise...</p>
+        <span class="msg-bear">🧸</span>
+        <h2>Je savais que tu dirais oui ! ❤️</h2>
+        <p>Tu es la plus belle chose qui me soit arrivée 🌸 Prépare-toi pour une belle surprise...</p>
     </div>
 
-    <div class="container">
-        <!-- Section Valentine (affichée en premier) -->
-        <div class="valentine-section" id="valentineSection">
-            <div class="valentine-question"><strong>Veux-tu être ma Valentine ?</strong> 💕</div>
-            <div class="valentine-buttons">
-                <button class="valentine-button yes" id="yesButton" onclick="handleYes()">Oui ❤️</button>
-                <button class="valentine-button no" id="noButton" onclick="handleNo()">Non 💔</button>
-            </div>
+    <!-- Contenu de la page -->
+    <div class="page-wrapper">
+
+        <!-- En-tête -->
+        <div class="site-header">
+            <h1>Notre histoire ❤️</h1>
+            <span class="sparkles">✨ 💕 ✨</span>
         </div>
 
-        <!-- Contenu principal (caché initialement) -->
-        <div id="mainContent" style="display: none;">
-            <!-- Titre principal -->
-            <h1>❤️</h1>
+        <!-- Nounours SVG animé -->
+        <div class="bear-container">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
+                <!-- Ombre douce -->
+                <ellipse cx="100" cy="195" rx="50" ry="7" fill="rgba(180,80,100,0.18)" />
 
-            <!-- Galerie d'images -->
-            <div class="images-wrapper" id="imagesWrapper">
-                <img src="images/IMG_4006.jpeg" alt="Notre photo 1" onclick="openLightbox(0)">
-                <img src="images/IMG_6427.jpeg" alt="Notre photo 2" onclick="openLightbox(1)">
-                <img src="images/IMG_7547.jpeg" alt="Notre photo 3" onclick="openLightbox(2)">
-                <img src="images/IMG_7559.jpeg" alt="Notre photo 4" onclick="openLightbox(3)">
+                <!-- Corps -->
+                <ellipse cx="100" cy="138" rx="52" ry="55" fill="#c8854e" />
+                <!-- Ventre claire -->
+                <ellipse cx="100" cy="148" rx="32" ry="38" fill="#e8b88a" />
+
+                <!-- Bras gauche -->
+                <ellipse cx="42" cy="148" rx="18" ry="13" fill="#c8854e" transform="rotate(-20,42,148)" />
+                <!-- Bras droit -->
+                <ellipse cx="158" cy="148" rx="18" ry="13" fill="#c8854e" transform="rotate(20,158,148)" />
+
+                <!-- Jambe gauche -->
+                <ellipse cx="73" cy="183" rx="22" ry="15" fill="#b77840" />
+                <!-- Jambe droite -->
+                <ellipse cx="127" cy="183" rx="22" ry="15" fill="#b77840" />
+                <!-- Coussinets pied gauche -->
+                <ellipse cx="73" cy="191" rx="16" ry="8" fill="#a06030" />
+                <ellipse cx="127" cy="191" rx="16" ry="8" fill="#a06030" />
+
+                <!-- Tête -->
+                <circle cx="100" cy="82" r="52" fill="#c8854e" />
+
+                <!-- Oreilles -->
+                <circle cx="56" cy="40" r="20" fill="#c8854e" />
+                <circle cx="56" cy="40" r="12" fill="#e8a87a" />
+                <circle cx="144" cy="40" r="20" fill="#c8854e" />
+                <circle cx="144" cy="40" r="12" fill="#e8a87a" />
+
+                <!-- Museau -->
+                <ellipse cx="100" cy="96" rx="24" ry="18" fill="#e8a87a" />
+
+                <!-- Nez -->
+                <ellipse cx="100" cy="89" rx="8" ry="6" fill="#5a2d18" />
+
+                <!-- Sourire -->
+                <path d="M88,102 Q100,114 112,102" stroke="#5a2d18" stroke-width="2.5" fill="none"
+                    stroke-linecap="round" />
+
+                <!-- Yeux -->
+                <circle cx="83" cy="74" r="9" fill="#2d1a0a" />
+                <circle cx="117" cy="74" r="9" fill="#2d1a0a" />
+                <!-- Reflet yeux -->
+                <circle cx="86" cy="71" r="3" fill="white" />
+                <circle cx="120" cy="71" r="3" fill="white" />
+
+                <!-- Joues roses -->
+                <ellipse cx="72" cy="90" rx="10" ry="7" fill="#ff9cc2" opacity="0.6" />
+                <ellipse cx="128" cy="90" rx="10" ry="7" fill="#ff9cc2" opacity="0.6" />
+
+                <!-- Nœud papillon rouge -->
+                <g transform="translate(100,120)">
+                    <polygon points="-14,-7 0,0 -14,7" fill="#e8527a" />
+                    <polygon points="14,-7  0,0  14,7" fill="#e8527a" />
+                    <circle cx="0" cy="0" r="5" fill="#ff4d6d" />
+                </g>
+
+                <!-- Cœur tenu (bras) -->
+                <g transform="translate(148,158)">
+                    <path d="M0,-10 C5,-18 18,-18 18,-8 C18,0 0,14 0,14 C0,14 -18,0 -18,-8 C-18,-18 -5,-18 0,-10 Z"
+                        fill="#ff4d6d" opacity="0.9" />
+                </g>
+
+                <!-- Petits points décoratifs ventre -->
+                <circle cx="90" cy="148" r="3" fill="#fff" opacity="0.35" />
+                <circle cx="100" cy="155" r="3" fill="#fff" opacity="0.35" />
+                <circle cx="110" cy="148" r="3" fill="#fff" opacity="0.35" />
+            </svg>
+        </div>
+
+        <!-- Card principale -->
+        <div class="card">
+            <span class="star-corner tl">⭐</span>
+            <span class="star-corner tr">🌟</span>
+            <span class="star-corner bl">💫</span>
+            <span class="star-corner br">⭐</span>
+
+            <!-- SECTION VALENTINE -->
+            <div id="valentineSection">
+                <div class="valentine-question">Veux-tu être ma Valentine ? 💕</div>
+                <div class="deco-row">
+                    <span>🌸</span><span>💖</span><span>🌹</span><span>💝</span><span>🌸</span>
+                </div>
+                <div class="valentine-buttons">
+                    <button class="val-btn yes" id="yesButton" onclick="handleYes()">Oui, bien sûr ! ❤️</button>
+                    <button class="val-btn no" id="noButton" onclick="handleNo()">Non 💔</button>
+                </div>
             </div>
 
-            <!-- Bouton SoundCloud -->
-            <a href="https://soundcloud.com/user-828147496/popiere-6?si=0f20ac20bb1843c6963d0571f98815a9&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" class="button button-secondary" target="_blank">🎵 Pour toi</a>
+            <!-- CONTENU PRINCIPAL (caché) -->
+            <div id="mainContent" style="display:none;">
+                <div class="main-title">💕 Notre amour en images 💕</div>
+                <div class="images-wrapper" id="imagesWrapper">
+                    <div class="img-frame" onclick="openLightbox(0)">
+                        <img src="images/IMG_4006.jpeg" alt="Notre photo 1">
+                        <span class="frame-heart">💕</span>
+                    </div>
+                    <div class="img-frame" onclick="openLightbox(1)">
+                        <img src="images/IMG_6427.jpeg" alt="Notre photo 2">
+                        <span class="frame-heart">🌸</span>
+                    </div>
+                    <div class="img-frame" onclick="openLightbox(2)">
+                        <img src="images/IMG_7547.jpeg" alt="Notre photo 3">
+                        <span class="frame-heart">💖</span>
+                    </div>
+                    <div class="img-frame" onclick="openLightbox(3)">
+                        <img src="images/IMG_7559.jpeg" alt="Notre photo 4">
+                        <span class="frame-heart">🌹</span>
+                    </div>
+                </div>
 
-            <!-- Décoration -->
-            <div class="decoration">❤️ ❤️ ❤️</div>
+                <a href="https://soundcloud.com/user-828147496/popiere-6?si=0f20ac20bb1843c6963d0571f98815a9&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
+                    class="music-btn" target="_blank">
+                    <span class="music-note">🎵</span>
+                    Une chanson pour toi
+                </a>
+
+                <div class="footer-deco">❤️ 🧸 ❤️</div>
+            </div>
         </div>
     </div>
 
-    <!-- Lightbox pour voir les images en grand -->
+    <!-- Lightbox -->
     <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-        <div class="lightbox-close" onclick="closeLightbox(event)">×</div>
-        <div class="lightbox-nav prev" onclick="navigateLightbox(-1); event.stopPropagation();">‹</div>
+        <div class="lb-close" onclick="closeLightbox({target:{id:'lightbox'}})">×</div>
+        <div class="lb-nav prev" onclick="navigateLightbox(-1); event.stopPropagation();">‹</div>
         <div class="lightbox-content">
             <img id="lightboxImage" src="" alt="Image agrandie">
         </div>
-        <div class="lightbox-nav next" onclick="navigateLightbox(1); event.stopPropagation();">›</div>
-        <div class="lightbox-counter" id="lightboxCounter">1 / 4</div>
+        <div class="lb-nav next" onclick="navigateLightbox(1); event.stopPropagation();">›</div>
+        <div class="lb-counter" id="lightboxCounter">1 / 4</div>
     </div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const startDate = new Date("2024-01-15");
-        let yesSizeMultiplier = 1;
-
-        // ==================== GESTION GLOBALE DES ANIMATIONS ====================
+        // ===== CANVAS SETUP =====
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-        const allConfetti = [];
-        const allHearts = [];
-        const allImageConfetti = [];
-        let animationStarted = false;
+        const allConfetti = [], allHearts = [];
+        let animating = false;
+        let yesSizeMultiplier = 1;
 
-        // Classes définies globalement pour éviter les problèmes de scope
         class ConfettiPiece {
             constructor() {
+                this.reset();
+            }
+            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height - canvas.height;
                 this.w = Math.random() * 12 + 6;
                 this.h = Math.random() * 8 + 4;
-                const colors = ['#ff6b9d', '#c44569', '#f8b500', '#ffa07a', '#ff69b4', '#ff1493', '#ff85b3', '#ffc0cb'];
+                const colors = ['#ff6b9d', '#c44569', '#f9c74f', '#ffa07a', '#ff69b4', '#ff1493', '#c77dff', '#ffd6e7'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 this.speed = Math.random() * 4 + 2;
                 this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 15 - 7.5;
+                this.rotSpeed = Math.random() * 15 - 7.5;
                 this.swing = Math.random() * 3 - 1.5;
-                this.swingSpeed = Math.random() * 0.1;
+                this.swingS = Math.random() * 0.1;
             }
-
             update() {
                 this.y += this.speed;
-                this.rotation += this.rotationSpeed;
-                this.x += Math.sin(this.y * this.swingSpeed) * this.swing;
-
-                if (this.y > canvas.height) {
-                    this.y = -10;
-                    this.x = Math.random() * canvas.width;
-                }
+                this.rotation += this.rotSpeed;
+                this.x += Math.sin(this.y * this.swingS) * this.swing;
+                if (this.y > canvas.height) this.reset();
             }
-
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.rotate(this.rotation * Math.PI / 180);
                 ctx.fillStyle = this.color;
-                // Ombre retirée pour meilleures performances
                 ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
                 ctx.restore();
             }
         }
 
-        class Heart {
-            constructor() {
+        class FloatingHeart {
+            constructor() { this.reset(); }
+            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 100;
-                this.size = Math.random() * 25 + 15;
-                this.speed = Math.random() * 3 + 1.5;
+                this.size = Math.random() * 26 + 14;
+                this.speed = Math.random() * 2.5 + 1;
                 this.opacity = Math.random() * 0.6 + 0.4;
-                const heartShapes = ['❤️', '💕', '💖', '💗', '💓', '💝'];
-                this.emoji = heartShapes[Math.floor(Math.random() * heartShapes.length)];
+                const emojis = ['❤️', '💕', '💖', '💗', '💓', '💝', '🌸'];
+                this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
                 this.swing = Math.random() * 2 - 1;
-                this.swingSpeed = Math.random() * 0.05;
+                this.swingS = Math.random() * 0.05;
             }
-
             update() {
                 this.y -= this.speed;
-                this.x += Math.sin(this.y * this.swingSpeed) * this.swing;
-
-                if (this.y < -50) {
-                    this.y = canvas.height + 10;
-                    this.x = Math.random() * canvas.width;
-                }
+                this.x += Math.sin(this.y * this.swingS) * this.swing;
+                if (this.y < -50) this.reset();
             }
-
             draw() {
                 ctx.save();
                 ctx.globalAlpha = this.opacity;
                 ctx.font = `${this.size}px Arial`;
-                // Ombre retirée pour meilleures performances
                 ctx.fillText(this.emoji, this.x, this.y);
                 ctx.restore();
             }
         }
 
-        class ImageConfettiPiece {
-            constructor(imageElements) {
-                this.image = imageElements[Math.floor(Math.random() * imageElements.length)];
-                this.x = Math.random() * canvas.width;
-                this.y = -100 - Math.random() * 500;
-                this.size = Math.random() * 60 + 40;
-                this.speed = Math.random() * 2 + 1;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 4 - 2;
-                this.opacity = Math.random() * 0.4 + 0.3;
-                this.swing = Math.random() * 2 - 1;
-                this.swingSpeed = Math.random() * 0.03;
-            }
-
-            update() {
-                this.y += this.speed;
-                this.rotation += this.rotationSpeed;
-                this.x += Math.sin(this.y * this.swingSpeed) * this.swing;
-
-                if (this.y > canvas.height + 100) {
-                    this.y = -100;
-                    this.x = Math.random() * canvas.width;
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.opacity;
-                ctx.translate(this.x, this.y);
-                ctx.rotate((this.rotation * Math.PI) / 180);
-
-                // Dessin simplifié sans clip pour meilleures performances
-                ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
-                ctx.restore();
-            }
-        }
-
-        // Boucle d'animation principale optimisée
-        let frameCount = 0;
-        function mainAnimationLoop() {
-            frameCount++;
-
+        function mainLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Dessiner tous les confettis
-            allConfetti.forEach((piece) => {
-                piece.update();
-                piece.draw();
-            });
-
-            // Dessiner tous les cœurs
-            allHearts.forEach((heart) => {
-                heart.update();
-                heart.draw();
-            });
-
-            // Confettis d'images désactivés pour performances
-            // allImageConfetti.forEach((piece) => {
-            //     piece.update();
-            //     piece.draw();
-            // });
-
-            requestAnimationFrame(mainAnimationLoop);
+            allConfetti.forEach(p => { p.update(); p.draw(); });
+            allHearts.forEach(h => { h.update(); h.draw(); });
+            requestAnimationFrame(mainLoop);
         }
 
-        // ==================== GESTION DES BOUTONS VALENTINE ====================
+        // ===== VALENTINE BUTTONS =====
         function handleNo() {
-            // Augmenter la taille du bouton Oui
-            yesSizeMultiplier += 0.3;
-            const yesButton = document.getElementById("yesButton");
-            yesButton.style.transform = `scale(${yesSizeMultiplier})`;
-            yesButton.style.zIndex = '10';
+            yesSizeMultiplier += 0.28;
+            const btn = document.getElementById("yesButton");
+            btn.style.transform = `scale(${yesSizeMultiplier})`;
+            btn.style.zIndex = '10';
         }
 
         function handleYes() {
-            // Démarrer l'animation si pas encore démarrée
-            if (!animationStarted) {
-                animationStarted = true;
-                mainAnimationLoop();
-            }
+            if (!animating) { animating = true; mainLoop(); }
+            for (let i = 0; i < 120; i++) allConfetti.push(new ConfettiPiece());
+            for (let i = 0; i < 25; i++) allHearts.push(new FloatingHeart());
 
-            // Lancer immédiatement les confettis et les cœurs
-            createConfetti();
-            createFloatingHearts();
+            const vs = document.getElementById("valentineSection");
+            vs.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            vs.style.opacity = "0";
+            vs.style.transform = "scale(0.9)";
 
-            // Cacher la section Valentine avec une transition
-            const valentineSection = document.getElementById("valentineSection");
-            valentineSection.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-            valentineSection.style.opacity = "0";
-            valentineSection.style.transform = "scale(0.9)";
-
-            // Afficher le message romantique après un court délai
             setTimeout(() => {
-                valentineSection.style.display = "none";
-                const romanticMessage = document.getElementById("romanticMessage");
-                romanticMessage.classList.add("show");
-
-                // Après 3 secondes, faire disparaître le message et afficher le contenu
+                vs.style.display = "none";
+                const rm = document.getElementById("romanticMessage");
+                rm.classList.add("show");
                 setTimeout(() => {
-                    romanticMessage.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-                    romanticMessage.style.opacity = "0";
-                    romanticMessage.style.transform = "translate(-50%, -50%) scale(0.8)";
-
+                    rm.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                    rm.style.opacity = "0";
+                    rm.style.transform = "translate(-50%,-50%) scale(0.85)";
                     setTimeout(() => {
-                        romanticMessage.style.display = "none";
+                        rm.style.display = "none";
                         showMainContent();
                     }, 500);
                 }, 3000);
@@ -956,148 +1122,61 @@
         }
 
         function showMainContent() {
-            // Afficher le contenu principal avec animation
-            const mainContent = document.getElementById("mainContent");
-            mainContent.style.display = "block";
-
-            // Petit délai pour permettre à display:block de s'appliquer
+            const mc = document.getElementById("mainContent");
+            mc.style.display = "block";
             setTimeout(() => {
-                mainContent.classList.add("show");
-
-                // Animer les images une par une
-                const images = document.querySelectorAll("#imagesWrapper img");
-                images.forEach((img, index) => {
-                    setTimeout(() => {
-                        img.classList.add("show");
-                    }, 800 + (index * 300));
+                mc.classList.add("show");
+                const frames = document.querySelectorAll(".img-frame");
+                frames.forEach((f, i) => {
+                    setTimeout(() => f.classList.add("show"), 500 + i * 280);
                 });
-
-                // Désactivé pour meilleures performances
-                // createImageConfetti();
             }, 50);
         }
 
-        // ==================== ANIMATIONS CONFETTIS ====================
-        function createConfetti() {
-            const confettiCount = 100; // Réduit de 300 à 100
-            for (let i = 0; i < confettiCount; i++) {
-                allConfetti.push(new ConfettiPiece());
-            }
-        }
-
-        // ==================== ANIMATIONS CŒURS FLOTTANTS ====================
-        function createFloatingHearts() {
-            const heartCount = 20; // Réduit de 50 à 20
-            for (let i = 0; i < heartCount; i++) {
-                allHearts.push(new Heart());
-            }
-        }
-
-        // ==================== CONFETTIS D'IMAGES ====================
-        function createImageConfetti() {
-            const imageSources = [
-                'images/IMG_4006.jpeg',
-                'images/IMG_6427.jpeg',
-                'images/IMG_7547.jpeg',
-                'images/IMG_7559.jpeg'
-            ];
-
-            const imageElements = [];
-
-            // Précharger les images
-            let loadedCount = 0;
-            imageSources.forEach((src, index) => {
-                const img = new Image();
-                img.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === imageSources.length) {
-                        startImageConfetti(imageElements);
-                    }
-                };
-                img.src = src;
-                imageElements[index] = img;
-            });
-
-            function startImageConfetti(imageElements) {
-                // Créer 8 confettis d'images (réduit de 20 à 8)
-                for (let i = 0; i < 8; i++) {
-                    allImageConfetti.push(new ImageConfettiPiece(imageElements));
-                }
-            }
-        }
-
-        // ==================== REDIMENSIONNEMENT DU CANVAS ====================
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // ==================== LIGHTBOX GALLERY ====================
+        // ===== LIGHTBOX =====
         const imageSources = [
             'images/IMG_4006.jpeg',
             'images/IMG_6427.jpeg',
             'images/IMG_7547.jpeg',
             'images/IMG_7559.jpeg'
         ];
-        let currentImageIndex = 0;
+        let currentIdx = 0;
 
-        function openLightbox(index) {
-            currentImageIndex = index;
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImage = document.getElementById('lightboxImage');
-            const lightboxCounter = document.getElementById('lightboxCounter');
-
-            lightboxImage.src = imageSources[currentImageIndex];
-            lightboxCounter.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
-
-            lightbox.classList.add('show');
-            document.body.style.overflow = 'hidden'; // Empêcher le scroll
+        function openLightbox(idx) {
+            currentIdx = idx;
+            document.getElementById('lightboxImage').src = imageSources[idx];
+            document.getElementById('lightboxCounter').textContent = `${idx + 1} / ${imageSources.length}`;
+            document.getElementById('lightbox').classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
-        function closeLightbox(event) {
-            if (event.target.id === 'lightbox' || event.target.classList.contains('lightbox-close')) {
-                const lightbox = document.getElementById('lightbox');
-                lightbox.classList.remove('show');
-                document.body.style.overflow = 'auto'; // Réactiver le scroll
+        function closeLightbox(e) {
+            if (e && (e.target.id === 'lightbox' || e.target.classList.contains('lb-close'))) {
+                document.getElementById('lightbox').classList.remove('show');
+                document.body.style.overflow = '';
             }
         }
 
-        function navigateLightbox(direction) {
-            currentImageIndex += direction;
-
-            // Boucle circulaire
-            if (currentImageIndex < 0) {
-                currentImageIndex = imageSources.length - 1;
-            } else if (currentImageIndex >= imageSources.length) {
-                currentImageIndex = 0;
-            }
-
-            const lightboxImage = document.getElementById('lightboxImage');
-            const lightboxCounter = document.getElementById('lightboxCounter');
-
-            // Réinitialiser l'animation
-            lightboxImage.style.animation = 'none';
+        function navigateLightbox(dir) {
+            currentIdx = (currentIdx + dir + imageSources.length) % imageSources.length;
+            const img = document.getElementById('lightboxImage');
+            img.style.animation = 'none';
             setTimeout(() => {
-                lightboxImage.src = imageSources[currentImageIndex];
-                lightboxImage.style.animation = 'imageZoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                lightboxCounter.textContent = `${currentImageIndex + 1} / ${imageSources.length}`;
+                img.src = imageSources[currentIdx];
+                img.style.animation = 'lbZoom 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+                document.getElementById('lightboxCounter').textContent = `${currentIdx + 1} / ${imageSources.length}`;
             }, 10);
         }
 
-        // Navigation au clavier
-        document.addEventListener('keydown', (e) => {
-            const lightbox = document.getElementById('lightbox');
-            if (lightbox.classList.contains('show')) {
-                if (e.key === 'ArrowLeft') {
-                    navigateLightbox(-1);
-                } else if (e.key === 'ArrowRight') {
-                    navigateLightbox(1);
-                } else if (e.key === 'Escape') {
-                    lightbox.classList.remove('show');
-                    document.body.style.overflow = 'auto';
-                }
+        document.addEventListener('keydown', e => {
+            const lb = document.getElementById('lightbox');
+            if (lb.classList.contains('show')) {
+                if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                if (e.key === 'ArrowRight') navigateLightbox(1);
+                if (e.key === 'Escape') { lb.classList.remove('show'); document.body.style.overflow = ''; }
             }
         });
     </script>
 </body>
+
 </html>

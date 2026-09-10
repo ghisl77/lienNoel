@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trouve ghichain 🐻</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #1a0a12;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ===== ÉCRAN D'INTRO ===== */
+    #intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      text-align: center;
+      padding: 40px;
+      animation: fadeIn .6s ease;
+    }
+
+    #intro .intro-emoji { font-size: 5rem; animation: bounce 1.6s infinite; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+
+    #intro h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: #ffc0cb;
+      text-shadow: 0 0 30px rgba(255,130,170,.7);
+      line-height: 1.3;
+    }
+
+    #intro p {
+      color: #f9a8d4;
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      max-width: 420px;
+      line-height: 1.6;
+    }
+
+    .play-btn {
+      margin-top: 10px;
+      padding: 16px 50px;
+      font-size: 1.2rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #e8609e 0%, #c2185b 100%);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(232,96,158,.5);
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: 1px;
+    }
+    .play-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(232,96,158,.6); }
+    .play-btn:active { transform: translateY(0); }
+
+    /* ===== SCÈNE DE JEU ===== */
+    #game { display: none; position: relative; width: 100%; height: 100vh; }
+
+    /* Header UI */
+    #game-header {
+      position: absolute; top: 0; left: 0; right: 0;
+      background: rgba(20,5,15,.7);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px;
+      z-index: 50;
+      border-bottom: 1px solid rgba(255,182,193,.2);
+    }
+    #game-header .title-ui {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.4rem;
+      color: #ffc0cb;
+    }
+    #hint-btn {
+      background: rgba(255,182,193,.15);
+      border: 1px solid rgba(255,182,193,.4);
+      color: #ffc0cb;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-size: .9rem;
+      transition: background .3s;
+    }
+    #hint-btn:hover { background: rgba(255,182,193,.3); }
+
+    /* Hint toast */
+    #hint-toast {
+      position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,105,143,.9);
+      color: white; padding: 10px 24px;
+      border-radius: 30px; font-size: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+      opacity: 0; transition: opacity .4s;
+      z-index: 60; pointer-events: none;
+      white-space: nowrap;
+    }
+    #hint-toast.show { opacity: 1; }
+
+    /* ===== LA CHAMBRE ===== */
+    .room {
+      position: absolute;
+      top: 50px; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+    }
+
+    /* Mur */
+    .wall {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 68%;
+      background: linear-gradient(180deg, #f5c6e0 0%, #f0b0d0 100%);
+    }
+
+    /* Papier-peint fleurs */
+    .wall::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,100,150,.15) 30px, transparent 31px),
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.2) 20px, transparent 21px),
+        radial-gradient(circle at 60% 15%, rgba(255,100,150,.15) 30px, transparent 31px),
+        radial-gradient(circle at 60% 15%, rgba(255,255,255,.2) 20px, transparent 21px),
+        radial-gradient(circle at 85% 40%, rgba(255,100,150,.15) 30px, transparent 31px),
+        radial-gradient(circle at 85% 40%, rgba(255,255,255,.2) 20px, transparent 21px),
+        radial-gradient(circle at 40% 65%, rgba(255,100,150,.15) 30px, transparent 31px),
+        radial-gradient(circle at 40% 65%, rgba(255,255,255,.2) 20px, transparent 21px),
+        radial-gradient(circle at 75% 75%, rgba(255,100,150,.15) 30px, transparent 31px);
+      background-size: 220px 200px;
+    }
+
+    /* Plinthe */
+    .wall::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 14px;
+      background: linear-gradient(180deg, #d4a5b5, #c98fa3);
+      border-top: 2px solid #e8b8cc;
+    }
+
+    /* Parquet */
+    .floor {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 32%;
+      background: linear-gradient(180deg, #c8956a 0%, #b07d54 100%);
+    }
+    .floor::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 59px,
+        rgba(0,0,0,.08) 59px, rgba(0,0,0,.08) 62px
+      );
+    }
+
+    /* ===== FENÊTRE ===== */
+    .window {
+      position: absolute;
+      top: 8%;
+      left: 6%;
+      width: 160px; height: 200px;
+      background: linear-gradient(160deg, #0d1b4e 0%, #1a2d7c 50%, #2d1f6e 100%);
+      border: 8px solid #d4b0c0;
+      border-radius: 8px 8px 4px 4px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,.4), 0 4px 15px rgba(0,0,0,.3);
+      overflow: hidden;
+    }
+    /* Croix de fenêtre */
+    .window::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; width: 6px; height: 100%;
+      background: rgba(212,176,192,.7);
+      transform: translateX(-50%);
+    }
+    .window::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; width: 100%; height: 6px;
+      background: rgba(212,176,192,.7);
+      transform: translateY(-50%);
+    }
+    /* Étoiles */
+    .star {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+    .star:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+    .star:nth-child(2) { top: 35%; left: 70%; animation-delay: .4s; width: 4px; height: 4px; }
+    .star:nth-child(3) { top: 60%; left: 30%; animation-delay: .8s; }
+    .star:nth-child(4) { top: 20%; left: 80%; animation-delay: .2s; }
+    .star:nth-child(5) { top: 75%; left: 55%; animation-delay: .6s; }
+    .star:nth-child(6) { top: 10%; left: 50%; animation-delay: 1s; width: 2px; height: 2px; }
+    .star:nth-child(7) { top: 85%; left: 15%; animation-delay: 1.2s; width: 2px; height: 2px; }
+    @keyframes twinkle { from { opacity: .3; } to { opacity: 1; } }
+
+    /* Lune */
+    .moon {
+      position: absolute;
+      top: 10%; right: 15%;
+      width: 28px; height: 28px;
+      background: #ffd966;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(255,217,102,.8);
+    }
+    .moon::after {
+      content: '';
+      position: absolute;
+      top: -3px; right: -4px;
+      width: 22px; height: 22px;
+      background: #1a2d7c;
+      border-radius: 50%;
+    }
+
+    /* Rideaux */
+    .curtain-left, .curtain-right {
+      position: absolute;
+      top: -4px;
+      width: 50px; height: 240px;
+      background: linear-gradient(180deg, #e878a8 0%, #d45090 100%);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+    .curtain-left { left: -10px; transform-origin: top left; transform: skewX(8deg); }
+    .curtain-right { right: -10px; transform-origin: top right; transform: skewX(-8deg); }
+
+    /* ===== BIBLIOTHÈQUE ===== */
+    .bookshelf {
+      position: absolute;
+      right: 5%;
+      top: 5%;
+      width: 130px;
+    }
+    .shelf {
+      width: 100%;
+      background: #8B5E3C;
+      height: 10px;
+      border-radius: 2px;
+      box-shadow: 0 3px 6px rgba(0,0,0,.3);
+      margin-bottom: 0;
+    }
+    .books {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      padding: 0 4px;
+      margin-bottom: 0;
+    }
+    .book {
+      border-radius: 2px 2px 0 0;
+      flex-shrink: 0;
+    }
+
+    /* ===== LIT ===== */
+    .bed {
+      position: absolute;
+      bottom: 28%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px, 75%);
+    }
+
+    /* Tête de lit */
+    .bed-head {
+      margin: 0 auto;
+      width: 92%;
+      height: 80px;
+      background: linear-gradient(180deg, #e8b0c8 0%, #d090b0 100%);
+      border-radius: 12px 12px 0 0;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,.15), 0 -4px 12px rgba(0,0,0,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .heart-deco { font-size: 1.6rem; opacity: .6; }
+
+    /* Matelas */
+    .mattress {
+      width: 100%;
+      height: 90px;
+      background: linear-gradient(180deg, #f9e4ef 0%, #f2cfe0 100%);
+      border-radius: 6px;
+      position: relative;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+
+    /* Couverture */
+    .blanket {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(135deg, #c2185b 0%, #e91e63 40%, #c2185b 100%);
+      border-radius: 0 0 6px 6px;
+    }
+    .blanket::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent, transparent 14px,
+        rgba(255,255,255,.08) 14px, rgba(255,255,255,.08) 16px
+      );
+      border-radius: inherit;
+    }
+    .blanket-top {
+      position: absolute;
+      bottom: 45px; left: 0; right: 0;
+      height: 20px;
+      background: linear-gradient(180deg, #f8bbd0, #f48fb1);
+      border-radius: 4px;
+    }
+
+    /* Oreillers */
+    .pillows {
+      position: absolute;
+      top: 8px; left: 0; right: 0;
+      display: flex; gap: 10px;
+      padding: 0 14px;
+    }
+    .pillow {
+      flex: 1;
+      height: 42px;
+      background: linear-gradient(160deg, #fff5f8, #fce4ec);
+      border-radius: 8px;
+      box-shadow: inset 0 -3px 0 rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* ===== NOUNOURS caché derrière l'oreiller droit ===== */
+    #teddy {
+      position: absolute;
+      bottom: 34px;
+      right: 14px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.4));
+      animation: teddyWobble 3s ease-in-out infinite;
+      transition: transform .2s;
+      user-select: none;
+      /* Partiellement caché par l'oreiller – on le positionne juste derrière */
+      clip-path: inset(0 0 40% 0); /* seulement la tête dépasse */
+    }
+    #teddy:hover {
+      clip-path: none;
+      animation: none;
+      transform: scale(1.3) rotate(-10deg);
+      filter: drop-shadow(0 0 12px rgba(255,180,100,.9));
+    }
+    @keyframes teddyWobble {
+      0%, 100% { transform: rotate(-4deg) translateY(0); }
+      50% { transform: rotate(4deg) translateY(-3px); }
+    }
+
+    /* ===== BUREAU ===== */
+    .desk {
+      position: absolute;
+      bottom: 28%;
+      left: 4%;
+      width: 130px;
+    }
+    .desk-top {
+      width: 100%;
+      height: 14px;
+      background: linear-gradient(180deg, #b07045, #8B5532);
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 -4px 0 rgba(255,255,255,.1);
+    }
+    .desk-body {
+      width: 90%;
+      margin: 0 auto;
+      height: 65px;
+      background: linear-gradient(180deg, #9a6040, #7a4a30);
+      border-radius: 0 0 4px 4px;
+    }
+    /* Lampe de bureau */
+    .lamp {
+      position: absolute;
+      bottom: 14px;
+      left: 24px;
+      width: 20px; height: 50px;
+    }
+    .lamp-pole {
+      position: absolute;
+      bottom: 0; left: 50%;
+      width: 4px; height: 40px;
+      background: #757575;
+      transform: translateX(-50%);
+    }
+    .lamp-head {
+      position: absolute;
+      top: 0; left: 50%;
+      width: 34px; height: 22px;
+      background: linear-gradient(135deg, #fdd835, #f9a825);
+      border-radius: 18px 18px 4px 4px;
+      transform: translateX(-50%) rotate(-20deg);
+      box-shadow: 0 0 20px rgba(255,220,50,.7);
+    }
+    /* Livre sur le bureau */
+    .desk-book {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      width: 28px; height: 36px;
+      background: linear-gradient(180deg, #e91e63, #c2185b);
+      border-radius: 2px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,.3);
+    }
+
+    /* ===== PLANTE ===== */
+    .plant {
+      position: absolute;
+      bottom: 28%;
+      right: 5%;
+    }
+    .pot {
+      width: 34px; height: 30px;
+      background: linear-gradient(180deg, #bf8040, #996030);
+      border-radius: 4px 4px 8px 8px;
+      margin: 0 auto;
+    }
+    .leaves {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.2rem;
+      filter: drop-shadow(0 4px 4px rgba(0,0,0,.2));
+    }
+
+    /* ===== TAPIS ===== */
+    .rug {
+      position: absolute;
+      bottom: 28%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(400px, 70%);
+      height: 30px;
+      background: radial-gradient(ellipse, #c2185b 60%, #880e4f 100%);
+      border-radius: 50%;
+      opacity: .5;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    }
+
+    /* ===== PHOTOS SUR LE MUR ===== */
+    .wall-photo {
+      position: absolute;
+      background: white;
+      padding: 5px 5px 20px 5px;
+      box-shadow: 2px 4px 10px rgba(0,0,0,.25);
+    }
+    .wall-photo .photo-inner {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #f8bbd0, #fce4ec);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+    }
+    .photo-1 { width: 70px; height: 80px; top: 10%; left: 28%; transform: rotate(-4deg); }
+    .photo-2 { width: 60px; height: 70px; top: 8%; left: 42%; transform: rotate(3deg); }
+
+    /* Étiquette nounours introuvable */
+    .tag {
+      position: absolute;
+      top: 8%; left: 50%; transform: translateX(-50%);
+      background: rgba(255,105,143,.85);
+      color: white;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: .9rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* ===== CANVAS CŒURS ===== */
+    #heart-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 200;
+      display: none;
+    }
+
+    /* ===== MODAL RÉCOMPENSE ===== */
+    #win-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,0,8,.75);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #win-overlay.show { display: flex; animation: fadeIn .4s ease; }
+
+    #win-modal {
+      background: linear-gradient(145deg, #fff0f6, white);
+      border-radius: 24px;
+      padding: clamp(30px, 6vw, 60px) clamp(24px, 5vw, 50px);
+      max-width: min(480px, 90vw);
+      text-align: center;
+      box-shadow: 0 20px 80px rgba(232,96,158,.5), 0 0 0 1px rgba(255,182,193,.3);
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .teddy-big { font-size: 5rem; display: block; margin-bottom: 16px; animation: teddyDance 1s ease-in-out infinite alternate; }
+    @keyframes teddyDance {
+      from { transform: rotate(-8deg) scale(.95); }
+      to { transform: rotate(8deg) scale(1.05); }
+    }
+
+    #win-modal h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 6vw, 3rem);
+      color: #d81b60;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    #win-modal p {
+      font-size: clamp(1.1rem, 3vw, 1.35rem);
+      color: #b0004e;
+      line-height: 1.7;
+    }
+    .close-btn {
+      margin-top: 28px;
+      padding: 12px 36px;
+      background: linear-gradient(135deg, #e8609e, #c2185b);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(232,96,158,.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .close-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(232,96,158,.5); }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 500px) {
+      .window { width: 110px; height: 140px; left: 4%; }
+      .curtain-left, .curtain-right { height: 180px; width: 36px; }
+      .bookshelf { width: 90px; }
+      .desk { width: 100px; }
+      .wall-photo { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== ÉCRAN D'INTRO ===== -->
+<div id="intro">
+  <div class="intro-emoji">🐻</div>
+  <h1>Trouve ghichain<br>dans ma chambre !</h1>
+  <p>Un petit nounours se cache quelque part dans la chambre. Sauras-tu le trouver ? 🔍</p>
+  <button class="play-btn" onclick="startGame()">Jouer 💕</button>
+</div>
+
+<!-- ===== JEU ===== -->
+<div id="game">
+  <div id="game-header">
+    <span class="title-ui">🐻 Trouve ghichain !</span>
+    <button id="hint-btn" onclick="showHint()">Indice 💡</button>
+  </div>
+  <div id="hint-toast">Psst… regarde bien près des oreillers du lit 👀</div>
+
+  <div class="room">
+    <!-- Mur -->
+    <div class="wall"></div>
+    <!-- Parquet -->
+    <div class="floor"></div>
+
+    <!-- Fenêtre -->
+    <div class="window">
+      <div class="moon"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="curtain-left"></div>
+      <div class="curtain-right"></div>
+    </div>
+
+    <!-- Photos au mur -->
+    <div class="wall-photo photo-1"><div class="photo-inner">💑</div></div>
+    <div class="wall-photo photo-2"><div class="photo-inner">🌸</div></div>
+
+    <!-- Bibliothèque -->
+    <div class="bookshelf" style="top:5%">
+      <div class="books">
+        <div class="book" style="width:14px;height:60px;background:#e53935;"></div>
+        <div class="book" style="width:12px;height:50px;background:#8e24aa;"></div>
+        <div class="book" style="width:16px;height:65px;background:#1e88e5;"></div>
+        <div class="book" style="width:10px;height:45px;background:#fb8c00;"></div>
+        <div class="book" style="width:13px;height:55px;background:#43a047;"></div>
+        <div class="book" style="width:15px;height:62px;background:#f06292;"></div>
+        <div class="book" style="width:11px;height:48px;background:#fdd835;"></div>
+      </div>
+      <div class="shelf"></div>
+      <div class="books" style="margin-top:0">
+        <div class="book" style="width:13px;height:48px;background:#26c6da;"></div>
+        <div class="book" style="width:15px;height:58px;background:#ef5350;"></div>
+        <div class="book" style="width:12px;height:44px;background:#ab47bc;"></div>
+        <div class="book" style="width:16px;height:55px;background:#ffca28;"></div>
+        <div class="book" style="width:10px;height:50px;background:#66bb6a;"></div>
+        <div class="book" style="width:14px;height:52px;background:#42a5f5;"></div>
+      </div>
+      <div class="shelf"></div>
+    </div>
+
+    <!-- Tapis -->
+    <div class="rug"></div>
+
+    <!-- Lit -->
+    <div class="bed">
+      <div class="bed-head">
+        <span class="heart-deco">💕</span>
+        <span class="heart-deco">🌸</span>
+        <span class="heart-deco">💕</span>
+      </div>
+      <div class="mattress">
+        <div class="pillows">
+          <div class="pillow">🌸</div>
+          <div class="pillow">💕</div>
+        </div>
+        <div class="blanket-top"></div>
+        <div class="blanket"></div>
+
+        <!-- 🐻 NOUNOURS caché derrière l'oreiller droit -->
+        <span id="teddy" onclick="foundTeddy()" title="C'est lui !">🐻</span>
+      </div>
+    </div>
+
+    <!-- Bureau -->
+    <div class="desk">
+      <div class="lamp">
+        <div class="lamp-head"></div>
+        <div class="lamp-pole"></div>
+      </div>
+      <div class="desk-book"></div>
+      <div class="desk-top"></div>
+      <div class="desk-body"></div>
+    </div>
+
+    <!-- Plante -->
+    <div class="plant">
+      <div class="leaves">🌿</div>
+      <div class="pot"></div>
+    </div>
+
+  </div><!-- /room -->
+</div><!-- /game -->
+
+<!-- ===== CANVAS CŒURS ===== -->
+<canvas id="heart-canvas"></canvas>
+
+<!-- ===== MODAL VICTOIRE ===== -->
+<div id="win-overlay">
+  <div id="win-modal">
+    <span class="teddy-big">🐻</span>
+    <h2>Tu as trouvé ghichain ! 🎉</h2>
+    <p>💕 <strong>Je t'aime mon cœur,<br>passe une bonne journée</strong> 💕</p>
+    <button class="close-btn" onclick="closeWin()">Fermer ❤️</button>
+  </div>
+</div>
+
+<script>
+  // ----- INTRO -----
+  function startGame() {
+    document.getElementById('intro').style.display = 'none';
+    const game = document.getElementById('game');
+    game.style.display = 'block';
+    game.style.animation = 'fadeIn .6s ease';
+  }
+
+  // ----- INDICE -----
+  function showHint() {
+    const toast = document.getElementById('hint-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // ----- TROUVER LE NOUNOURS -----
+  function foundTeddy() {
+    // Show win overlay
+    document.getElementById('win-overlay').classList.add('show');
+    // Launch hearts
+    const canvas = document.getElementById('heart-canvas');
+    canvas.style.display = 'block';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    launchHearts(canvas);
+  }
+
+  function closeWin() {
+    document.getElementById('win-overlay').classList.remove('show');
+    document.getElementById('heart-canvas').style.display = 'none';
+    heartsRunning = false;
+  }
+
+  // ----- PLUIE DE CŒURS -----
+  let heartsRunning = false;
+  const heartChars = ['❤️','💕','💖','💗','💓','🌸','✨'];
+
+  function launchHearts(canvas) {
+    const ctx = canvas.getContext('2d');
+    heartsRunning = true;
+    const particles = [];
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 200,
+        emoji: heartChars[Math.floor(Math.random() * heartChars.length)],
+        size: Math.random() * 24 + 16,
+        speed: Math.random() * 3 + 2,
+        drift: Math.random() * 2 - 1,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - .5) * .08,
+        opacity: 1,
+      });
+    }
+
+    function draw() {
+      if (!heartsRunning) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.y -= p.speed;
+        p.x += p.drift;
+        p.rotation += p.rotSpeed;
+        if (p.y < -50) {
+          p.y = canvas.height + 20;
+          p.x = Math.random() * canvas.width;
+        }
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.font = `${p.size}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.emoji, 0, 0);
+        ctx.restore();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // Resize canvas on window resize
+  window.addEventListener('resize', () => {
+    const c = document.getElementById('heart-canvas');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  });
+</script>
+</body>
+</html>
